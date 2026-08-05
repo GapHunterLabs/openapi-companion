@@ -1,0 +1,40 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>dev.gaphunter.openapicompanion</id>
+    <name>OpenAPI Companion</name>
+    <vendor>Gap Hunter Labs</vendor>
+    <description><![CDATA[
+        <p>Reliable go-to-definition for $ref in OpenAPI/Swagger specs
+        (JSON and YAML, same-file and external-file), OAS 3.1 type-union
+        validation, and always-current compatibility with new JetBrains
+        IDE releases.</p>
+        <p>Built from real, current evidence across four independent
+        sources in this exact space: a paid competitor with a
+        multi-year recurring pattern of falling 2+ releases behind
+        every new JetBrains IDE version (weeks without a working
+        plugin each time) and no external $ref support at all
+        ("not usable"); a freemium competitor with a memory leak that
+        crashes the IDE on large specs and incomplete OAS 3.1 support
+        despite advertising it; a free competitor, abandoned since
+        2023, that makes the IDE unusable on large files (10+ second
+        lags); and JetBrains's own bundled OpenAPI plugin, independently
+        documented elsewhere in this catalog as "catastrophically
+        slow... turned into torture" even on small 10-15-endpoint
+        files.</p>
+        <p>100% Paid, no free tier -- every feature above requires a
+        license after the standard JetBrains 30-day trial.</p>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.json</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <psi.referenceContributor language="JSON"
+                                   implementation="dev.gaphunter.openapicompanion.reference.JsonOpenApiRefReferenceContributor"/>
+        <psi.referenceContributor language="yaml"
+                                   implementation="dev.gaphunter.openapicompanion.reference.YamlOpenApiRefReferenceContributor"/>
+        <annotator language="JSON" implementationClass="dev.gaphunter.openapicompanion.highlighting.OpenApiRefAnnotator"/>
+        <annotator language="yaml" implementationClass="dev.gaphunter.openapicompanion.highlighting.OpenApiRefAnnotator"/>
+    </extensions>
+</idea-plugin>

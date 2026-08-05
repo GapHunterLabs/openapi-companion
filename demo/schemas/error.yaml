@@ -1,0 +1,12 @@
+ApiError:
+  type: object
+  required:
+    - code
+    - message
+  properties:
+    code:
+      type: string
+      example: ORDER_NOT_FOUND
+    message:
+      type: string
+      example: No order exists with the given id.

@@ -1,0 +1,99 @@
+openapi: 3.0.3
+info:
+  title: Acme Corp Orders API
+  version: 1.4.0
+  description: >
+    Order management for api.acme-corp.com -- create, look up, and
+    cancel customer orders.
+
+servers:
+  - url: https://api.acme-corp.com/v1
+
+paths:
+  /orders/{orderId}:
+    get:
+      summary: Fetch a single order
+      operationId: getOrder
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The requested order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: No such order
+          content:
+            application/json:
+              schema:
+                # Cross-file reference -- resolves into schemas/error.yaml.
+                $ref: './schemas/error.yaml#/ApiError'
+
+  /orders/{orderId}/cancel:
+    post:
+      summary: Cancel an order
+      operationId: cancelOrder
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order canceled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '409':
+          description: Order already shipped, cannot cancel
+          content:
+            application/json:
+              schema:
+                # Intentionally broken for the demo -- CancellationError was
+                # renamed to ApiError and this $ref was never updated. Flagged
+                # with a warning instead of silently pointing nowhere.
+                $ref: '#/components/schemas/CancellationError'
+
+components:
+  schemas:
+    Order:
+      type: object
+      required:
+        - id
+        - status
+        - customerEmail
+      properties:
+        id:
+          type: string
+          example: ord_8f3a2b1c
+        status:
+          type: string
+          enum: [pending, shipped, canceled]
+        customerEmail:
+          type: string
+          format: email
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+
+    LineItem:
+      type: object
+      required:
+        - sku
+        - quantity
+      properties:
+        sku:
+          type: string
+          example: SKU-4471
+        quantity:
+          type: integer
+          minimum: 1
