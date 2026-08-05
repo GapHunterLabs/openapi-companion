@@ -121,22 +121,38 @@ blocks normal use of the sandbox entirely. This is a bigger, more
 urgent finding than the original Ctrl+B mystery: it affects all future
 local testing/demo work on this plugin, not just this one check.
 
-**Not yet tried:** the "Start trial" tab (as opposed to "Paid
-license") on that same Subscriptions dialog might grant a real,
-platform-recognized trial state without needing an actual JetBrains
-account login -- if so, that would be the *correct* way to test this
-(exercising the real `LicensingFacade` path end to end, more
-faithfully than the old code-bypass ever did), not just a workaround.
-Untried because the dialog loop was already disruptive enough for one
-session (`Manage Subscriptions` -> `Confirm Restart` -> process death,
-twice) -- worth trying deliberately next time, not as another
-reflexive retry.
+**"Start trial" tried, 2026-08-05 (same session, after re-launching
+clean, no code bypass): also blocked, but for a clear, external
+reason.** Clicking "Start Trial" returns "Trial license is not
+supported for your product version" -- makes sense once connected to
+[[api_security_companion_pro_v020]]'s own note: the **Trial Period**
+field on a plugin's Marketplace Sales page only becomes settable once
+that plugin clears moderation and reaches "In stock" status.
+`openapi-companion`'s `2026.1.0` build is still "Submitted", not yet
+approved, so no trial period has ever been configured for it -- there
+is nothing for "Start Trial" to grant yet. This isn't a bug to fix;
+it's the same external approval dependency already tracked for the
+Trial Period step itself.
 
-**Ctrl+B specifically is still unconfirmed either way.** The suppressor
-fix itself (code, tests, `verifyPlugin`) remains solid regardless of
-this blocker, and being licensed-gated means it's inert/safe if wrong
--- keep it. Confirming it live needs the trial-tab path above, next
-session.
+**Ctrl+B specifically is still unconfirmed, blocked by an external
+dependency, not a code problem.** Both realistic verification paths
+are now exhausted for this session:
+1. Code-level `CheckLicense` bypass -> blocked by the platform's own
+   subscription/restart dialog loop (see above).
+2. Real "Start Trial" -> blocked by the plugin not yet being approved/
+   "In stock" on Marketplace, so no trial period exists to grant.
+
+**Next real step, once JetBrains approves the `2026.1.0` submission:**
+set the Trial Period on the Sales page (30 days, matching the
+README/outreach promise, same step already pending for
+`api-security-companion`), *then* retry "Start Trial" in a fresh
+`runIde` sandbox -- that should finally grant a real, platform-recognized
+trial and unblock live testing of this fix (and of the plugin in
+general) with no code changes needed on either side.
+
+The suppressor fix itself (code, tests, `verifyPlugin`) remains solid
+regardless of this blocker, and being licensed-gated means it's
+inert/safe if wrong -- keep it.
 
 **Impact:** cosmetic/UX only regardless of outcome here -- the
 underlying `resolve()` logic that the warning annotator depends on
