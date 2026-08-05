@@ -83,21 +83,60 @@ API flags raised against this interface (the build's own hard-fail
 gates on those categories didn't trigger, which is itself a signal
 this is a stable, intentionally-public extension point).
 
-**Still not 100% confirmed:** this was verified through tests and log
-analysis, never against a live `runIde` sandbox with an actual Ctrl+B
-press (no sandbox was available when this fix was written). The
-mechanism, the interface, and the registration are all confirmed real
-and correctly wired — what's unconfirmed is whether
-`JsonSchemaGotoDeclarationHandler` is in fact the exact handler
-`GotoDeclarationAction` was hitting (vs. some other handler in the
-dispatch chain). **Next step: launch `runIde`, open `demo/openapi.yaml`
-with a valid license simulated (temporary bypass, same one-line-revert
-pattern as the original screenshot session), and press Ctrl+B on the
-`Order` `$ref` for real.** If this doesn't fix it, the suppressor
-being licensed-gated means it's a safe, inert addition either way —
-worth keeping regardless of outcome, since it's philosophically the
-right thing to register given this plugin depends on
-`com.intellij.modules.json`.
+**Still not 100% confirmed -- and live verification is now blocked by a
+separate, more fundamental problem (2026-08-05).** Attempted the live
+Ctrl+B check with the usual temporary `CheckLicense.isLicensed()`
+bypass, exactly as done for the original screenshot session. This time
+it didn't work the same way: on launch, the IDE now shows its own
+**platform-level** "Manage Subscriptions" dialog for OpenAPI Companion
+("Activate to enable"), and closing it immediately triggers a second
+"Confirm Restart -- Application restart is necessary to disable
+features requiring license" dialog. Clicking Restart doesn't actually
+restart anything inside a `./gradlew runIde` sandbox (there's no
+external launcher process to relaunch it, unlike a real installed IDE)
+-- it just kills the whole process (`finished with non-zero exit value
+7`). Relaunching hits the exact same two dialogs again, in a loop with
+no way to dismiss them and just use the IDE normally.
+
+**Root cause (inferred, not deeply investigated further --
+CLAUDE.md's anti-loop rule applies to this too):** this is new
+behavior that only appeared after adding a *real*, non-`optional`
+`<product-descriptor>` for the Paid pricing model enrollment (see
+[[openapi_companion_v010]]). `ansible-companion`/`api-security-companion`
+never show this, because their descriptors both have
+`optional="true"` (Freemium -- the platform doesn't gate a Freemium
+plugin's own launch on licensing status). For a 100%-Paid descriptor,
+the platform apparently now enforces its *own* licensing UI
+independently of -- and prior to -- anything this plugin's own
+`CheckLicense.kt` does. The temporary code-level bypass this catalog
+has used successfully for every other demo/screenshot session
+(including this exact plugin's *first* screenshot session, back when
+it had no product-descriptor at all) doesn't reach this: it's a
+platform-level gate, not something reachable from plugin code.
+
+**Consequence:** as of now, this plugin **cannot be interactively
+tested via `./gradlew runIde` at all** without a real, JetBrains-signed
+trial or license -- not just Ctrl+B, everything, since the dialog loop
+blocks normal use of the sandbox entirely. This is a bigger, more
+urgent finding than the original Ctrl+B mystery: it affects all future
+local testing/demo work on this plugin, not just this one check.
+
+**Not yet tried:** the "Start trial" tab (as opposed to "Paid
+license") on that same Subscriptions dialog might grant a real,
+platform-recognized trial state without needing an actual JetBrains
+account login -- if so, that would be the *correct* way to test this
+(exercising the real `LicensingFacade` path end to end, more
+faithfully than the old code-bypass ever did), not just a workaround.
+Untried because the dialog loop was already disruptive enough for one
+session (`Manage Subscriptions` -> `Confirm Restart` -> process death,
+twice) -- worth trying deliberately next time, not as another
+reflexive retry.
+
+**Ctrl+B specifically is still unconfirmed either way.** The suppressor
+fix itself (code, tests, `verifyPlugin`) remains solid regardless of
+this blocker, and being licensed-gated means it's inert/safe if wrong
+-- keep it. Confirming it live needs the trial-tab path above, next
+session.
 
 **Impact:** cosmetic/UX only regardless of outcome here -- the
 underlying `resolve()` logic that the warning annotator depends on
