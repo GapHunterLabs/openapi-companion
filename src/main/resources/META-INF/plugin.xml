@@ -46,5 +46,13 @@
                                    implementation="dev.gaphunter.openapicompanion.reference.YamlOpenApiRefReferenceContributor"/>
         <annotator language="JSON" implementationClass="dev.gaphunter.openapicompanion.highlighting.OpenApiRefAnnotator"/>
         <annotator language="yaml" implementationClass="dev.gaphunter.openapicompanion.highlighting.OpenApiRefAnnotator"/>
+        <!-- See OpenApiJsonSchemaGtdSuppressor's own doc comment and
+             KNOWN_ISSUES.md Round 1: suppresses the bundled JSON Schema
+             go-to-declaration handler on recognized OpenAPI files, only
+             once licensed, so this plugin's own references get a chance
+             to resolve instead of losing to the bundled handler every
+             time (GotoDeclarationHandlers run before generic
+             PsiReference resolution). -->
+        <json.jsonSchemaGotoDeclarationSuppressor implementation="dev.gaphunter.openapicompanion.reference.OpenApiJsonSchemaGtdSuppressor"/>
     </extensions>
 </idea-plugin>

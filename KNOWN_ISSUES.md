@@ -34,25 +34,72 @@ session — only PSI-reference-based navigation is affected.
   confirmed via `disabled_plugins.txt` in the sandbox config, and the
   IDE restarted. Same "No usages found" result regardless.
 
-**Still open — not yet root-caused.** Because `BasePlatformTestCase`
-doesn't load the real Ultimate-bundled plugin set the same way a real
-`runIde` sandbox does, and because IntelliJ's generic JSON Schema
-framework (`com.intellij.modules.json`, independent of the Swagger
-plugin) can auto-associate `.yaml` files matching known API-spec
-patterns with a schema and contribute its own `$ref` navigation, that
-generic (non-Swagger) mechanism is the next thing to check -- not yet
-confirmed. Whatever the actual cause, "No usages found" (not "Cannot
-find declaration to go to") specifically indicates *no* reference is
-being returned at that caret in the live session, not a resolution
-failure -- so this is about reference-contribution precedence/dispatch
-among multiple contributors on the same PSI element, not about
-[[CheckLicense]] or our pointer-resolution logic.
+**Likely root cause found 2026-08-05, fix implemented, not yet
+confirmed live (no sandbox available this session — user was away,
+this was done through code/log verification only, same discipline as
+always: don't guess, but also don't block on a live check that isn't
+available).** Read `com.intellij.modules.json`'s own bundled
+`plugin.xml` directly (extracted from `intellij.json.backend.jar`,
+same technique used to find the Swagger plugin's registrations) and
+found: `<gotoDeclarationHandler id="JsonSchemaGotoDeclarationHandler"
+implementation="com.jetbrains.jsonSchema.impl.JsonSchemaGotoDeclarationHandler" />`.
+This is a **different, higher-priority extension point** than
+`psi.referenceContributor` — the platform consults registered
+`GotoDeclarationHandler`s *before* falling back to generic
+`PsiReference` resolution for Ctrl+B/Ctrl+Click. Since
+`com.intellij.modules.json` is one of this plugin's own hard
+dependencies, this handler is *always* present regardless of the
+Swagger plugin's enabled state — explains why disabling Swagger didn't
+change anything. This also lines up exactly with the earlier
+diagnostic: "No usages found" (not "Cannot find declaration") is what
+the platform shows when no `GotoDeclarationHandler` returns a target
+*and* the element isn't classified as a reference either — consistent
+with `JsonSchemaGotoDeclarationHandler` claiming the element first,
+attempting its own generic-JSON-Schema-shaped resolution (which likely
+doesn't handle OAS's specific `#/components/schemas/X` convention the
+same way this plugin's own `YamlPointer`/`JsonPointer` do), and coming
+up empty.
 
-**Impact:** cosmetic/UX only for now -- the underlying `resolve()` logic
-that the warning annotator depends on works correctly (proven above and
-via the annotator itself working live), so broken-ref detection is not
-affected. Go-to-definition via Ctrl+B/Ctrl+Click may not work for some
-users in IDEA Ultimate until this is root-caused. Not blocking the v1
-release; revisit before advertising "go-to-definition" as unconditionally
-reliable in the Marketplace listing if this turns out to affect the
-Community-only (non-Swagger-bundled) case too.
+**Fix:** `com.intellij.modules.json` also declares an official
+suppression mechanism for exactly this situation —
+`<extensionPoint qualifiedName="com.intellij.json.jsonSchemaGotoDeclarationSuppressor"
+interface="com.jetbrains.jsonSchema.extension.JsonSchemaGotoDeclarationSuppressor" />`,
+a one-method interface (`shouldSuppressGtd(PsiElement): Boolean`,
+confirmed via `javap` against the actual bundled class since this
+isn't part of the public SDK docs). The Swagger plugin already uses
+this same mechanism for its own recognized files (`SwJsonSchemaGtdSuppressor`),
+which is what first suggested this was a real, intended extension
+point rather than something to work around unofficially. Implemented
+`OpenApiJsonSchemaGtdSuppressor`, registered under
+`json.jsonSchemaGotoDeclarationSuppressor` in `plugin.xml`: suppresses
+the bundled handler only on files `OpenApiDetector` recognizes **and**
+only when [[CheckLicense]] reports a valid license — an unlicensed
+user must never lose the bundled navigation to gain nothing in its
+place, since this plugin's own references intentionally never resolve
+without a license either (100% Paid, no free tier). 3 new tests in
+`OpenApiJsonSchemaGtdSuppressorTest`, all passing; full suite 21/21;
+`verifyPlugin` 6/6 Compatible, no internal/experimental/override-only
+API flags raised against this interface (the build's own hard-fail
+gates on those categories didn't trigger, which is itself a signal
+this is a stable, intentionally-public extension point).
+
+**Still not 100% confirmed:** this was verified through tests and log
+analysis, never against a live `runIde` sandbox with an actual Ctrl+B
+press (no sandbox was available when this fix was written). The
+mechanism, the interface, and the registration are all confirmed real
+and correctly wired — what's unconfirmed is whether
+`JsonSchemaGotoDeclarationHandler` is in fact the exact handler
+`GotoDeclarationAction` was hitting (vs. some other handler in the
+dispatch chain). **Next step: launch `runIde`, open `demo/openapi.yaml`
+with a valid license simulated (temporary bypass, same one-line-revert
+pattern as the original screenshot session), and press Ctrl+B on the
+`Order` `$ref` for real.** If this doesn't fix it, the suppressor
+being licensed-gated means it's a safe, inert addition either way —
+worth keeping regardless of outcome, since it's philosophically the
+right thing to register given this plugin depends on
+`com.intellij.modules.json`.
+
+**Impact:** cosmetic/UX only regardless of outcome here -- the
+underlying `resolve()` logic that the warning annotator depends on
+works correctly (proven independently), so broken-ref detection was
+never affected by any of this.
