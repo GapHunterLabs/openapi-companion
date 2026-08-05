@@ -29,6 +29,16 @@
     <depends>com.intellij.modules.json</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
 
+    <!-- Real product code assigned by JetBrains Marketplace on enrolling this
+         plugin in the Paid pricing model (2026-08-04). No optional="true":
+         unlike every Freemium plugin in this catalog, this is 100% Paid, no
+         free tier, the base plugin itself requires a license, not just one
+         extra feature. release-version must share leading digits with the
+         plugin's own version, which is why this build moved from 0.1.0 to
+         the AAAA.N.N scheme (same forcing function already hit once with
+         ansible-companion's Freemium enrollment). -->
+    <product-descriptor code="[REDACTED-PRODUCT-CODE]" release-date="20260804" release-version="20261"/>
+
     <extensions defaultExtensionNs="com.intellij">
         <psi.referenceContributor language="JSON"
                                    implementation="dev.gaphunter.openapicompanion.reference.JsonOpenApiRefReferenceContributor"/>

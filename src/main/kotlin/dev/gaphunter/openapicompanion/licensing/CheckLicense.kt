@@ -39,17 +39,15 @@ import java.util.Base64
  * license) and the annotator (shows a "license required" message
  * instead of a real diagnostic). See CheckLicenseGate.kt.
  *
- * PRODUCT_CODE below is a placeholder, format-valid (max 15 chars,
- * starts with letter P, all uppercase, no digits/symbols) but not an
- * assigned code -- this plugin has not been enrolled in Marketplace
- * Monetization yet. Replace with the real assigned code only once
- * actually applying for Paid in the Marketplace UI (see
- * ansible-companion's real Freemium enrollment for the full trail of
- * what that process involves, including the plugin-version-scheme
- * change a real <product-descriptor> forces).
+ * PRODUCT_CODE is the real code JetBrains Marketplace assigned on
+ * enrolling this plugin in the Paid pricing model (2026-08-04) -- unlike
+ * ansible-companion's Freemium enrollment (which went through a support
+ * ticket before a code was assigned), Paid assigned the code immediately
+ * on selecting the pricing model. See the matching <product-descriptor>
+ * in plugin.xml and the AAAA.N.N version-scheme change it forced.
  */
 object CheckLicense {
-    private const val PRODUCT_CODE = "POPENAPICOMP"
+    private const val PRODUCT_CODE = "[REDACTED-PRODUCT-CODE]"
 
     private const val KEY_PREFIX = "key:"
     private const val STAMP_PREFIX = "stamp:"
