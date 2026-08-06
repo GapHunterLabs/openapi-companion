@@ -37,7 +37,7 @@
          plugin's own version, which is why this build moved from 0.1.0 to
          the AAAA.N.N scheme (same forcing function already hit once with
          ansible-companion's Freemium enrollment). -->
-    <product-descriptor code="POPENAPICOMPANI" release-date="20260804" release-version="20261"/>
+    <product-descriptor code="POPENAPICOMPANI" release-date="20260806" release-version="20261"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <psi.referenceContributor language="JSON"
