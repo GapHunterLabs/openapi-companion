@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [2026.1.1]
+
+### Fixed
+
+- Removed an internal Marketplace product code that had been
+  mistakenly documented in this changelog -- no user-facing change.
+
 ## [2026.1.0]
 
 ### Changed
@@ -45,6 +52,7 @@
 - No full JSON Schema instance validation (OAS 3.1 type unions
   included) -- a meaningfully larger scope than reference resolution.
 
-[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.0...HEAD
+[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.1...HEAD
+[2026.1.1]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.0...2026.1.1
 [2026.1.0]: https://github.com/GapHunterLabs/openapi-companion/compare/0.1.0...2026.1.0
 [0.1.0]: https://github.com/GapHunterLabs/openapi-companion/commits/0.1.0
