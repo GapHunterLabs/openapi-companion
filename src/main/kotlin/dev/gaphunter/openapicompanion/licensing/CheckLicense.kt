@@ -47,7 +47,7 @@ import java.util.Base64
  * in plugin.xml and the AAAA.N.N version-scheme change it forced.
  */
 object CheckLicense {
-    private const val PRODUCT_CODE = "[REDACTED-PRODUCT-CODE]"
+    private const val PRODUCT_CODE = "POPENAPICOMPANI"
 
     private const val KEY_PREFIX = "key:"
     private const val STAMP_PREFIX = "stamp:"
