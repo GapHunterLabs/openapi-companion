@@ -19,9 +19,9 @@
 
 - `<product-descriptor>` in `plugin.xml`, with the real product code
   JetBrains Marketplace assigned on enrolling this plugin in the Paid
-  pricing model: `code="[REDACTED-PRODUCT-CODE]"`. No `optional="true"` --
-  unlike every Freemium plugin in this catalog, this is 100% Paid, no
-  free tier, so the base plugin itself requires a license.
+  pricing model. No `optional="true"` -- unlike every Freemium plugin
+  in this catalog, this is 100% Paid, no free tier, so the base plugin
+  itself requires a license.
 
 ## [0.1.0]
 
