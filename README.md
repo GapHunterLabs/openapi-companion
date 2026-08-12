@@ -81,7 +81,7 @@ definition. A `$ref` that doesn't resolve is flagged with a warning.
 ## Support
 
 Questions, bug reports, or team/volume licensing: contact us at
-**kennyj.diazm@gmail.com**.
+**gaphunterlabs@gmail.com**.
 
 ## Development
 
