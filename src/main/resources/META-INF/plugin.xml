@@ -54,5 +54,6 @@
              time (GotoDeclarationHandlers run before generic
              PsiReference resolution). -->
         <json.jsonSchemaGotoDeclarationSuppressor implementation="dev.gaphunter.openapicompanion.reference.OpenApiJsonSchemaGtdSuppressor"/>
+        <gotoDeclarationHandler implementation="dev.gaphunter.openapicompanion.reference.OpenApiGotoDeclarationHandler"/>
     </extensions>
 </idea-plugin>
