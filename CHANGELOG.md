@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+## [2026.1.2]
+
+### Fixed
+
+- Ctrl+Click/Ctrl+B on a `$ref` value showed "No usages found" instead
+  of navigating, in every real IDE session (even with a trial license
+  active) -- confirmed via live logging that the bundled-handler
+  suppressor and this plugin's own reference resolution both worked
+  correctly in isolation, but the platform never fell back to the
+  generic reference after suppressing the bundled handler. Fixed by
+  registering a real `GotoDeclarationHandler` (the same extension
+  point the bundled handler itself uses), sidestepping that broken
+  hand-off entirely. Same root cause and fix as asyncapi-companion
+  0.1.1, ported here once confirmed working there first.
+
 ## [2026.1.1]
 
 ### Fixed
@@ -52,7 +67,8 @@
 - No full JSON Schema instance validation (OAS 3.1 type unions
   included) -- a meaningfully larger scope than reference resolution.
 
-[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.1...HEAD
+[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.2...HEAD
+[2026.1.2]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.1...2026.1.2
 [2026.1.1]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.0...2026.1.1
 [2026.1.0]: https://github.com/GapHunterLabs/openapi-companion/compare/0.1.0...2026.1.0
 [0.1.0]: https://github.com/GapHunterLabs/openapi-companion/commits/0.1.0

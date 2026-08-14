@@ -328,4 +328,121 @@ class YamlOpenApiRefReferenceTest : BasePlatformTestCase() {
         val refScalar = findRefScalar(myFixture.file)
         assertNull(YamlOpenApiRefUtil.asRefKeyValue(refScalar))
     }
+
+    /**
+     * Direct unit test of [OpenApiGotoDeclarationHandler] -- ported from
+     * the identical fix confirmed working live in asyncapi-companion
+     * (2026-08-13, see `openapi_companion_ctrlclick_broken_with_trial`
+     * memory entry): a real `GotoDeclarationHandler` sidesteps the
+     * broken suppressor-then-fallback hand-off that made Ctrl+B show
+     * "No usages found" despite the suppressor and the PsiReference both
+     * working correctly in isolation.
+     */
+    fun testGotoDeclarationHandlerResolvesTheSameRefDirectly() {
+        myFixture.configureByText(
+            "openapi.yaml",
+            """
+            openapi: 3.0.3
+            paths:
+              /pets:
+                get:
+                  responses:
+                    '200':
+                      content:
+                        application/json:
+                          schema:
+                            ${'$'}ref: '#/components/schemas/Pet<caret>'
+            components:
+              schemas:
+                Pet:
+                  type: object
+            """.trimIndent(),
+        )
+        val sourceElement = myFixture.file.findElementAt(myFixture.caretOffset)
+        val targets = OpenApiGotoDeclarationHandler(isLicensed = { true })
+            .getGotoDeclarationTargets(sourceElement, myFixture.caretOffset, myFixture.editor)
+        assertNotNull("expected the handler to return a non-null target array", targets)
+        assertTrue("expected at least one target", targets!!.isNotEmpty())
+        val keyValue = targets[0].parent as YAMLKeyValue
+        assertEquals("Pet", keyValue.keyText)
+    }
+
+    /**
+     * Reproduces the ACTUAL live failure on asyncapi-companion, ported
+     * here since the code shape is identical: caret on the literal
+     * `$ref` KEY text, not the value -- `sourceElement`'s PSI ancestors
+     * never include the value `YAMLScalar` in that case (they're
+     * siblings under the same `YAMLKeyValue`, not ancestor/descendant),
+     * so a naive `sourceElement.parent as? YAMLScalar` (or even walking
+     * up TO a YAMLScalar) fails silently. Fixed by walking up to the
+     * enclosing `YAMLKeyValue` first, then reading `.value` explicitly.
+     */
+    fun testGotoDeclarationHandlerResolvesWithCaretOnTheDollarRefKeyItself() {
+        myFixture.configureByText(
+            "openapi.yaml",
+            """
+            openapi: 3.0.3
+            paths:
+              /pets:
+                get:
+                  responses:
+                    '200':
+                      content:
+                        application/json:
+                          schema:
+                            ${'$'}re<caret>f: '#/components/schemas/Pet'
+            components:
+              schemas:
+                Pet:
+                  type: object
+            """.trimIndent(),
+        )
+        val sourceElement = myFixture.file.findElementAt(myFixture.caretOffset)
+        val targets = OpenApiGotoDeclarationHandler(isLicensed = { true })
+            .getGotoDeclarationTargets(sourceElement, myFixture.caretOffset, myFixture.editor)
+        assertNotNull("expected the handler to return a non-null target array", targets)
+        assertTrue("expected at least one target", targets!!.isNotEmpty())
+        val keyValue = targets[0].parent as YAMLKeyValue
+        assertEquals("Pet", keyValue.keyText)
+    }
+
+    fun testGotoDeclarationHandlerReturnsNullWithoutALicenseEvenWhenTheTargetIsValid() {
+        myFixture.configureByText(
+            "openapi.yaml",
+            """
+            openapi: 3.0.3
+            components:
+              schemas:
+                PetRef:
+                  ${'$'}ref: '#/components/schemas/Pet<caret>'
+                Pet:
+                  type: object
+            """.trimIndent(),
+        )
+        val sourceElement = myFixture.file.findElementAt(myFixture.caretOffset)
+        val targets = OpenApiGotoDeclarationHandler(isLicensed = { false })
+            .getGotoDeclarationTargets(sourceElement, myFixture.caretOffset, myFixture.editor)
+        assertTrue(
+            "100% Paid, no free tier -- must never resolve without a license, regardless of how valid the ref is",
+            targets == null || targets.isEmpty(),
+        )
+    }
+
+    fun testGotoDeclarationHandlerReturnsNullOutsideARecognizedOpenApiFile() {
+        myFixture.configureByText(
+            "plain.yaml",
+            """
+            ${'$'}re<caret>f: '#/definitions/User'
+            definitions:
+              User: {}
+            """.trimIndent(),
+        )
+        val sourceElement = myFixture.file.findElementAt(myFixture.caretOffset)
+        val targets = OpenApiGotoDeclarationHandler(isLicensed = { true })
+            .getGotoDeclarationTargets(sourceElement, myFixture.caretOffset, myFixture.editor)
+        assertTrue(
+            "expected no targets outside a recognized OpenAPI file",
+            targets == null || targets.isEmpty(),
+        )
+    }
 }
