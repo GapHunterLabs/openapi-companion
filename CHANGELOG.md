@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+## [2026.1.3]
+
+### Added
+
+- Review/star CTA: after 10 distinct real unresolved `$ref` findings, a
+  one-time notification asks whether to rate the plugin on Marketplace,
+  with a permanent "Don't ask again" option. The "license required"
+  message never counts towards this -- only a genuinely broken
+  reference does. Standard mechanism used catalog-wide since 2026-08-24
+  (`CONSTITUTION.md` §7.2), rolled out to this plugin now.
+
 ## [2026.1.2]
 
 ### Fixed
@@ -67,7 +78,8 @@
 - No full JSON Schema instance validation (OAS 3.1 type unions
   included) -- a meaningfully larger scope than reference resolution.
 
-[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.2...HEAD
+[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.3...HEAD
+[2026.1.3]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.2...2026.1.3
 [2026.1.2]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.1...2026.1.2
 [2026.1.1]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.0...2026.1.1
 [2026.1.0]: https://github.com/GapHunterLabs/openapi-companion/compare/0.1.0...2026.1.0

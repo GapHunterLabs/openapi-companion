@@ -40,6 +40,7 @@
     <product-descriptor code="POPENAPICOMPANI" release-date="20260804" release-version="20261"/>
 
     <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="OpenAPI Companion" displayType="BALLOON"/>
         <psi.referenceContributor language="JSON"
                                    implementation="dev.gaphunter.openapicompanion.reference.JsonOpenApiRefReferenceContributor"/>
         <psi.referenceContributor language="yaml"

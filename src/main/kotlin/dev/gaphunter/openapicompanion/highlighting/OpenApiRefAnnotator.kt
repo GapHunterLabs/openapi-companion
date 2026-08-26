@@ -10,6 +10,7 @@ import dev.gaphunter.openapicompanion.reference.JsonOpenApiRefReference
 import dev.gaphunter.openapicompanion.reference.JsonOpenApiRefUtil
 import dev.gaphunter.openapicompanion.reference.YamlOpenApiRefReference
 import dev.gaphunter.openapicompanion.reference.YamlOpenApiRefUtil
+import dev.gaphunter.openapicompanion.review.ReviewPrompt
 import org.jetbrains.yaml.psi.YAMLScalar
 
 /**
@@ -55,6 +56,12 @@ class OpenApiRefAnnotator : Annotator {
             holder.newAnnotation(HighlightSeverity.WARNING, "Cannot resolve reference '$refText'")
                 .range(element.textRange)
                 .create()
+            // Only the real "broken reference" finding counts towards the CTA --
+            // the "license required" branch above is a monetization gate, not a
+            // problem in the user's spec, and must never inflate the counter.
+            val file = element.containingFile
+            val lineNumber = file.viewProvider.document?.getLineNumber(element.textRange.startOffset)?.plus(1) ?: 0
+            ReviewPrompt.recordHit(file.project, "${file.virtualFile?.path}:$lineNumber:$refText")
         }
     }
 }
