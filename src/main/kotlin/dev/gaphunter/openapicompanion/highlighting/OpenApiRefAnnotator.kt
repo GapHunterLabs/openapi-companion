@@ -5,6 +5,8 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
+import dev.gaphunter.openapicompanion.detection.OpenApiDetector
+import dev.gaphunter.openapicompanion.detection.RefConventionMismatch
 import dev.gaphunter.openapicompanion.licensing.CheckLicense
 import dev.gaphunter.openapicompanion.reference.JsonOpenApiRefReference
 import dev.gaphunter.openapicompanion.reference.JsonOpenApiRefUtil
@@ -53,7 +55,14 @@ class OpenApiRefAnnotator : Annotator {
         }
 
         if (!resolves) {
-            holder.newAnnotation(HighlightSeverity.WARNING, "Cannot resolve reference '$refText'")
+            val specVersion = OpenApiDetector.detect(element.containingFile.text)
+            val conventionMismatch = specVersion?.let { RefConventionMismatch.describe(refText, it) }
+            val message = if (conventionMismatch != null) {
+                "Cannot resolve reference '$refText' -- it $conventionMismatch"
+            } else {
+                "Cannot resolve reference '$refText'"
+            }
+            holder.newAnnotation(HighlightSeverity.WARNING, message)
                 .range(element.textRange)
                 .create()
             // Only the real "broken reference" finding counts towards the CTA --

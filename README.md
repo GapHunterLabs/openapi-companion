@@ -70,9 +70,12 @@ definition. A `$ref` that doesn't resolve is flagged with a warning.
   file, or vice versa) isn't supported yet -- same-format only. Most
   real-world multi-file specs stay consistent within one format, but
   this is a real gap, not a forgotten one.
-- No OAS-version-aware validation yet (e.g. flagging a Swagger 2.0
-  `$ref` convention used inside an OpenAPI 3.x document, or vice
-  versa) -- tracked for a future release.
+- No broad OAS-version-aware validation yet, but the single most common
+  real mistake in that space is caught: a `$ref` written with the
+  *other* version's schema-location convention (Swagger 2.0's
+  `#/definitions/...` used inside an OpenAPI 3.x document, or vice
+  versa) gets a specific explanation instead of a generic "cannot
+  resolve" — most real spec migrations leave a few of these behind.
 - No full JSON Schema instance validation (checking `example`/`default`
   values against their declared `type`, including OAS 3.1's type-union
   array syntax) -- a meaningfully larger scope than reference
