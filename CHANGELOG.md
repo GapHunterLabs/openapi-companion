@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+## [2026.2.0]
+
+### Added
+
+- An unresolved `$ref` written with the *other* OAS version's
+  schema-location convention (Swagger 2.0's `#/definitions/...` used
+  inside an OpenAPI 3.x document, or vice versa) now gets a specific
+  explanation instead of a generic "cannot resolve reference" -- the
+  single most common real mistake left behind by a spec migration.
+
 ## [2026.1.3]
 
 ### Added
@@ -78,7 +88,8 @@
 - No full JSON Schema instance validation (OAS 3.1 type unions
   included) -- a meaningfully larger scope than reference resolution.
 
-[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.3...HEAD
+[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.2.0...HEAD
+[2026.2.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.3...2026.2.0
 [2026.1.3]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.2...2026.1.3
 [2026.1.2]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.1...2026.1.2
 [2026.1.1]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.0...2026.1.1
