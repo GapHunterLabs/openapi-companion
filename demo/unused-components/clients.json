@@ -1,0 +1,5 @@
+{
+  "billingAddress": {
+    "$ref": "openapi.yaml#/components/schemas/Address"
+  }
+}

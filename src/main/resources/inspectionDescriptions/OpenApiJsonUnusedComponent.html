@@ -1,0 +1,17 @@
+<html>
+<body>
+Reports a reusable component in a JSON OpenAPI/Swagger spec that no <code>$ref</code> anywhere in the project points to:
+a schema, response, parameter, example, request body, header, link or callback under <code>components</code>,
+or a Swagger 2.0 <code>definitions</code> entry.
+<p>The same check as Spectral's <code>oas3-unused-component</code> / <code>oas2-unused-definition</code> and
+Redocly's <code>no-unused-components</code>, with no CLI or account required. References are found in every
+YAML and JSON file in the project, including split-out fragment files and files in the other format.</p>
+<p>Never reported:</p>
+<ul>
+  <li><code>securitySchemes</code> &mdash; they are used by name in <code>security</code>, never through <code>$ref</code>.</li>
+  <li>A schema named in a <code>discriminator</code> mapping, or an implicit discriminator subtype (a schema whose
+    <code>allOf</code> points at a schema that declares a <code>discriminator</code>).</li>
+</ul>
+<p>&ldquo;Potentially&rdquo; unused: a reference from another repository can't be seen from here.</p>
+</body>
+</html>
