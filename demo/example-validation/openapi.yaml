@@ -1,0 +1,176 @@
+openapi: 3.0.3
+info:
+  title: Example validation demo
+  version: 1.0.0
+# Open this file with a license active: every warning expected here is
+# marked "FLAGGED" below. Everything marked "SILENT" is a known false-positive
+# trap that must stay quiet.
+paths:
+  /pets/{petId}:
+    parameters:
+      - name: petId
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        # FLAGGED: below the minimum 1
+        example: 0
+    get:
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/Status'
+          # FLAGGED: not one of the enum values (checked through the $ref)
+          example: shipped
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date
+          # SILENT: a timestamp for YAML 1.1 parsers, a string for YAML 1.2
+          example: 2024-01-01
+        - name: verbose
+          in: query
+          schema:
+            type: string
+          # SILENT: a boolean for YAML 1.1 parsers, a string for YAML 1.2
+          example: yes
+      responses:
+        '200':
+          description: A pet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              examples:
+                fluffy:
+                  # FLAGGED twice: age is not an integer, tags[1] is not a string
+                  value:
+                    id: 7
+                    name: Fluffy
+                    age: old
+                    tags: [cute, 3]
+                minimal:
+                  # SILENT: the required id is readOnly
+                  value:
+                    name: Rex
+                shared:
+                  # SILENT: a referenced example is checked where it's declared
+                  $ref: '#/components/examples/SharedPet'
+                remote:
+                  # SILENT: never fetched
+                  externalValue: 'https://example.com/pet.json'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              # SILENT: an XML example is a string by design
+              example: '<pet><name>Fluffy</name></pet>'
+            application/x-ndjson:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              # SILENT: newline-delimited JSON examples are strings
+              example: '{"name":"a"}\n{"name":"b"}'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              # A split-out fragment file, which in turn refs a JSON file.
+              $ref: 'schemas/order.yaml'
+            # FLAGGED twice: petId is required by schemas/order.yaml, and
+            # address.zip must be a string per shared/address.json
+            example:
+              quantity: 3
+              address:
+                city: Lima
+                zip: 150101
+      responses:
+        '201':
+          description: Created
+components:
+  examples:
+    SharedPet:
+      value:
+        name: Shared
+  schemas:
+    Status:
+      type: string
+      enum: [available, pending, sold]
+      example: available
+    Pet:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 10
+          # FLAGGED: longer than maxLength 10
+          example: Fluffy the Magnificent
+        age:
+          type: integer
+        nickname:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        # SILENT: PROPERTIES named "example" and "default", not examples
+        example:
+          type: string
+        default:
+          type: boolean
+      # SILENT: valid, including a null for the nullable nickname
+      example:
+        id: 1
+        name: Rex
+        nickname: null
+        example: x
+        default: true
+    Price:
+      type: number
+      # FLAGGED: a quoted number is a string
+      default: '9.99'
+    OpeningTime:
+      type: string
+      # SILENT: the integer 750 for YAML 1.1 parsers, a string for YAML 1.2
+      example: 12:30
+    StringOrNumber:
+      oneOf:
+        - type: string
+        - type: integer
+      # SILENT: oneOf/anyOf/allOf schemas are never guessed at
+      example: true
+    RemoteThing:
+      type: object
+      properties:
+        thing:
+          $ref: 'https://example.com/schemas/thing.yaml'
+      # SILENT: a remote $ref is never fetched, so thing can't be checked
+      example:
+        thing: 42
+    Base:
+      type: object
+      required: [kind]
+      properties:
+        kind:
+          type: string
+      example: &baseExample
+        kind: base
+    Sized:
+      type: object
+      required: [kind, size]
+      properties:
+        kind:
+          type: string
+        size:
+          type: integer
+      # SILENT: kind comes in through the merge key
+      example:
+        <<: *baseExample
+        size: 3

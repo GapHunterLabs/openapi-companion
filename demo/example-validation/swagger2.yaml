@@ -1,0 +1,55 @@
+swagger: '2.0'
+info:
+  title: Swagger 2.0 example validation demo
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      parameters:
+        - name: limit
+          in: query
+          type: integer
+          maximum: 100
+          # FLAGGED: above the maximum 100
+          default: 500
+        - name: tags
+          in: query
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+          # SILENT: a vendor extension some tools read as the raw field text
+          x-example: 'a,b'
+        - name: avatar
+          in: formData
+          type: file
+          # SILENT: "file" isn't a JSON type
+          default: none
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+          examples:
+            # FLAGGED: id is required
+            application/json:
+              name: Ann
+            # SILENT: not a JSON media type
+            text/plain: Ann
+definitions:
+  User:
+    type: object
+    required: [id, name]
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      email:
+        type: string
+        x-nullable: true
+    # SILENT: email is x-nullable
+    example:
+      id: 1
+      name: Ann
+      email: null

@@ -1,0 +1,33 @@
+openapi: 3.1.0
+info:
+  title: OAS 3.1 example validation demo
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Nickname:
+      type: [string, 'null']
+      examples:
+        - Rex
+        # SILENT: null is one of the declared types
+        - null
+        # FLAGGED: expected string or null
+        - 42
+    ApiVersion:
+      const: v2
+      # FLAGGED: not the constant
+      example: v1
+    Score:
+      type: number
+      exclusiveMinimum: 0
+      # FLAGGED: 3.1's numeric exclusiveMinimum
+      default: 0
+    TaggedNickname:
+      $ref: '#/components/schemas/Nickname'
+      description: In OAS 3.1, keywords next to a $ref apply too.
+      # SILENT: valid through the $ref
+      example: Rex
+    Count:
+      type: integer
+      # SILENT: 5.0 is the integer 5
+      example: 5.0

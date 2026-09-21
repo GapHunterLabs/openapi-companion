@@ -7,8 +7,10 @@
         <p>Reliable go-to-definition for $ref in OpenAPI/Swagger specs
         (JSON and YAML, same-file and external-file), a warning on any
         $ref that doesn't resolve, detection of reusable components that
-        nothing in the project references (no Spectral CLI or account
-        needed), and always-current compatibility with new JetBrains IDE
+        nothing in the project references, validation of example and
+        default values against their schema (OAS 3.1 type unions
+        included) -- no Spectral CLI or account needed -- and
+        always-current compatibility with new JetBrains IDE
         releases.</p>
         <p>Built from real, current evidence across four independent
         sources in this exact space: a paid competitor with a
@@ -39,7 +41,7 @@
          plugin's own version, which is why this build moved from 0.1.0 to
          the AAAA.N.N scheme (same forcing function already hit once with
          ansible-companion's Freemium enrollment). -->
-    <product-descriptor code="POPENAPICOMPANI" release-date="20260921" release-version="20263"/>
+    <product-descriptor code="POPENAPICOMPANI" release-date="20260921" release-version="20264"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="OpenAPI Companion" displayType="BALLOON"/>
@@ -66,5 +68,13 @@
                          displayName="Potentially unused OpenAPI component" groupName="OpenAPI Companion"
                          enabledByDefault="true" level="WARNING"
                          implementationClass="dev.gaphunter.openapicompanion.inspection.OpenApiJsonUnusedComponentInspection"/>
+        <localInspection language="yaml" shortName="OpenApiYamlExampleSchema"
+                         displayName="Example or default value doesn't match its schema" groupName="OpenAPI Companion"
+                         enabledByDefault="true" level="WARNING"
+                         implementationClass="dev.gaphunter.openapicompanion.inspection.OpenApiYamlExampleSchemaInspection"/>
+        <localInspection language="JSON" shortName="OpenApiJsonExampleSchema"
+                         displayName="Example or default value doesn't match its schema" groupName="OpenAPI Companion"
+                         enabledByDefault="true" level="WARNING"
+                         implementationClass="dev.gaphunter.openapicompanion.inspection.OpenApiJsonExampleSchemaInspection"/>
     </extensions>
 </idea-plugin>

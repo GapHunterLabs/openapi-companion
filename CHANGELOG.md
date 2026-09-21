@@ -4,6 +4,31 @@
 
 ## [Unreleased]
 
+## [2026.4.0]
+
+### Added
+
+- Inline `example` and `default` values are now checked against the
+  schema they illustrate: a wrong type, a value outside the `enum` (or
+  not the OAS 3.1 `const`), a missing required property, a wrong-typed
+  property or array item, or a number/string outside its
+  `minimum`/`maximum`/`minLength`/`maxLength` gets a warning on the exact
+  offending value. Covers schema examples and defaults at any depth
+  (plus OAS 3.1 `examples` arrays), parameter and header examples, and
+  JSON request/response body examples, in OAS 3.0, OAS 3.1 and Swagger
+  2.0 -- the same kind of check as Spectral's
+  `oas3-valid-schema-example`/`oas3-valid-media-example` and Redocly's
+  `no-invalid-schema-examples`/`no-invalid-media-type-examples`, with no
+  CLI or account.
+- OAS 3.1 type arrays (`type: [string, "null"]`), OAS 3.0 `nullable` and
+  Swagger 2.0 `x-nullable` are understood, and `$ref`s are followed
+  through local files in either format.
+- Fail-closed by design: schemas using `allOf`/`oneOf`/`anyOf`/`not`/`if`,
+  remote `$ref`s, unquoted YAML values that YAML 1.1 and 1.2 parsers read
+  differently (`2024-01-01`, `yes`, `010`), `readOnly`/`writeOnly`
+  required properties and non-JSON media types are skipped, never
+  guessed at.
+
 ## [2026.3.0]
 
 ### Added
@@ -111,7 +136,9 @@
 - No full JSON Schema instance validation (OAS 3.1 type unions
   included) -- a meaningfully larger scope than reference resolution.
 
-[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.2.0...HEAD
+[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.4.0...HEAD
+[2026.4.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.3.0...2026.4.0
+[2026.3.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.2.0...2026.3.0
 [2026.2.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.3...2026.2.0
 [2026.1.3]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.2...2026.1.3
 [2026.1.2]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.1...2026.1.2

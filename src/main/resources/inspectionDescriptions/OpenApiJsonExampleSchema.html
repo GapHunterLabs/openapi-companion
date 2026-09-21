@@ -1,0 +1,21 @@
+<html>
+<body>
+Reports an inline <code>example</code> or <code>default</code> value in a JSON OpenAPI/Swagger spec that doesn't
+match the schema it belongs to: a schema's own <code>example</code>/<code>default</code> (and, in OAS 3.1, its
+<code>examples</code> array), a parameter or header <code>example</code>/<code>examples</code>, or a JSON media type
+<code>example</code>/<code>examples</code>.
+<p>The same kind of check as Spectral's <code>oas3-valid-schema-example</code> / <code>oas3-valid-media-example</code>
+and Redocly's <code>no-invalid-schema-examples</code> / <code>no-invalid-media-type-examples</code>, with no CLI or
+account required. Checked: <code>type</code> (including OAS 3.1 type arrays with <code>"null"</code> and OAS 3.0
+<code>nullable</code>), <code>enum</code>, <code>const</code>, <code>required</code>, <code>properties</code>,
+<code>items</code>, <code>minimum</code>/<code>maximum</code>, <code>minLength</code>/<code>maxLength</code>, through
+local <code>$ref</code>s in either format.</p>
+<p>Deliberately never reported, rather than guessed:</p>
+<ul>
+  <li>Schemas using <code>allOf</code>, <code>oneOf</code>, <code>anyOf</code>, <code>not</code> or
+    <code>if</code>/<code>then</code>/<code>else</code>, and <code>$ref</code>s that don't resolve to a local file.</li>
+  <li>A missing required property that is <code>readOnly</code> or <code>writeOnly</code>.</li>
+  <li>Examples of non-JSON media types (XML, plain text), and a top-level <code>"example": null</code>.</li>
+</ul>
+</body>
+</html>

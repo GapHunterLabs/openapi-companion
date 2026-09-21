@@ -1,0 +1,22 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "Inventory", "version": "1.0.0" },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Item": {
+        "type": "object",
+        "required": ["sku"],
+        "properties": {
+          "sku": { "type": "string", "minLength": 3 },
+          "stock": { "type": "integer", "minimum": 0 }
+        },
+        "example": { "sku": "AB", "stock": 1.5 }
+      },
+      "Batch": {
+        "type": "integer",
+        "example": 10.0
+      }
+    }
+  }
+}
