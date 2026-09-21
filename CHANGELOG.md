@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-## [2026.4.0]
+## [2026.3.1]
 
 ### Added
 
@@ -136,8 +136,8 @@
 - No full JSON Schema instance validation (OAS 3.1 type unions
   included) -- a meaningfully larger scope than reference resolution.
 
-[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.4.0...HEAD
-[2026.4.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.3.0...2026.4.0
+[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.3.1...HEAD
+[2026.3.1]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.3.0...2026.3.1
 [2026.3.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.2.0...2026.3.0
 [2026.2.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.3...2026.2.0
 [2026.1.3]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.2...2026.1.3
