@@ -2,8 +2,9 @@
 
 IntelliJ-family plugin. Reliable go-to-definition (Ctrl+Click / Ctrl+B)
 for `$ref` values in OpenAPI/Swagger specs written in JSON or YAML,
-resolved entirely against local files, plus a warning on any `$ref`
-that doesn't actually resolve.
+resolved entirely against local files, a warning on any `$ref` that
+doesn't actually resolve, and detection of reusable components that
+nothing in the project references.
 
 **100% Paid, no free tier.** Unlike every other plugin in this catalog,
 this one has no permanently-free base -- every feature requires a
@@ -63,6 +64,36 @@ Open a JSON or YAML file with a top-level `openapi: "3.x"` or `swagger:
 "2.0"` field. Ctrl+Click (or Ctrl+B) any `$ref` value -- same-file
 pointers and cross-file references both navigate to the real
 definition. A `$ref` that doesn't resolve is flagged with a warning.
+
+### Potentially unused components
+
+A reusable component that no `$ref` anywhere in the project points to
+is shown grayed out, like any unused declaration in the IDE: a schema,
+response, parameter, example, request body, header, link or callback
+under `components`, or a Swagger 2.0 `definitions` entry. It's the same
+check as Spectral's `oas3-unused-component` / `oas2-unused-definition`
+and Redocly's `no-unused-components` -- but with no Spectral CLI to
+install and no account.
+
+References are looked up in every YAML and JSON file in the project,
+not only in files recognized as specs: split-out fragment files (no
+top-level `openapi:` key) and files in the other format both count.
+Never reported, by design:
+
+- `securitySchemes` -- they're used by name in `security`, never
+  through `$ref`.
+- A schema named in a `discriminator` mapping, or an implicit
+  discriminator subtype (a schema whose `allOf` points at a schema that
+  declares a `discriminator`) -- the false-positive trap other tools
+  have fallen into.
+
+Known limitations, all in the direction of fewer warnings rather than
+wrong ones: two files declaring a component with the same name share
+their references (a use of one counts for both); a reference from
+another repository can't be seen, hence "potentially"; and there's no
+automatic removal, since deleting a component a consumer elsewhere
+still needs isn't reversible. Settings -> Editor -> Inspections ->
+OpenAPI Companion turns it off or changes its severity.
 
 ## v1 scope cuts (documented, not silent)
 

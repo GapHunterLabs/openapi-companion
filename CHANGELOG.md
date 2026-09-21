@@ -4,6 +4,29 @@
 
 ## [Unreleased]
 
+## [2026.3.0]
+
+### Added
+
+- Reusable components that nothing in the project references are now
+  shown grayed out as "potentially unused" -- schemas, responses,
+  parameters, examples, request bodies, headers, links and callbacks
+  under `components`, or Swagger 2.0 `definitions`. Same check as
+  Spectral's `oas3-unused-component`/`oas2-unused-definition` and
+  Redocly's `no-unused-components`, with no CLI or account. References
+  are found across every YAML and JSON file in the project, including
+  split-out fragment files and files in the other format.
+  `securitySchemes` (used by name, never by `$ref`) and schemas used
+  only through a `discriminator` mapping or as implicit discriminator
+  subtypes are never reported.
+
+### Fixed
+
+- The plugin description listed "OAS 3.1 type-union validation", which
+  this plugin doesn't do. Removed from the description; it will only be
+  listed again once it actually ships.
+- A stray comma in the 2026.1.3 changelog entry.
+
 ## [2026.2.0]
 
 ### Added
@@ -22,8 +45,8 @@
   one-time notification asks whether to rate the plugin on Marketplace,
   with a permanent "Don't ask again" option. The "license required"
   message never counts towards this -- only a genuinely broken
-  reference does. Standard mechanism used catalog-wide since 2026-08-24
- , rolled out to this plugin now.
+  reference does. Standard mechanism used catalog-wide since
+  2026-08-24, rolled out to this plugin now.
 
 ## [2026.1.2]
 

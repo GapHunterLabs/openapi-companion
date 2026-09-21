@@ -1,0 +1,5 @@
+Price:
+  type: object
+  properties:
+    amount:
+      $ref: '../openapi.yaml#/components/schemas/Money'

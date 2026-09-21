@@ -1,0 +1,108 @@
+openapi: 3.0.3
+# Fixture for the "Potentially unused OpenAPI component" inspection. Open
+# this file in runIde to see the warnings. Components marked FLAGGED should
+# show one; every other component is a false-positive trap the check must
+# avoid. OpenApiUnusedComponentInspectionTest reads this directory as-is,
+# so a change here is a change to that test too. (Comments here never spell
+# out a component's pointer: the check is textual, so that would count as
+# a use and hide the very warning this file demonstrates.)
+info:
+  title: Pet Store (unused components demo)
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+        default:
+          $ref: '#/components/responses/Error'
+  /orders:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderItem'
+      responses:
+        '201':
+          description: Created
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      # Used by name in the top-level security list, never by $ref.
+      type: apiKey
+      in: header
+      name: X-API-Key
+    LegacyBasicAuth:
+      # Not used at all -- still never flagged: security schemes are out of
+      # scope by design, the same as upstream Spectral.
+      type: http
+      scheme: basic
+  parameters:
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+    UnusedFilter:
+      # FLAGGED: nothing references it.
+      name: filter
+      in: query
+      schema:
+        type: string
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            type: object
+    LegacyError:
+      # FLAGGED: nothing references it.
+      description: Old error shape, never removed after a migration
+  schemas:
+    Pet:
+      type: object
+      required: [petType]
+      properties:
+        petType:
+          type: string
+      discriminator:
+        propertyName: petType
+        mapping:
+          dog: Dog
+    Dog:
+      # Named only by its bare name in the discriminator mapping above.
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+    Cat:
+      # Implicit discriminator subtype: never referenced by name anywhere
+      # (the openapi-generator #4193 false-positive trap).
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+    Money:
+      # Referenced only from the fragment file schemas/price.yaml.
+      type: object
+      properties:
+        amount:
+          type: number
+    Address:
+      # Referenced only from clients.json -- a different file format.
+      type: object
+    OrderItem:
+      type: object
+    Order:
+      # FLAGGED: only OrderItem is referenced, never this one -- a longer
+      # name sharing its prefix must not count as a use.
+      type: object

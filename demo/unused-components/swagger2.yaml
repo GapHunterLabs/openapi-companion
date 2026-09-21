@@ -1,0 +1,18 @@
+swagger: '2.0'
+info:
+  title: Legacy users (unused definitions demo, Swagger 2.0)
+  version: '1.0'
+paths:
+  /users:
+    get:
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+definitions:
+  User:
+    type: object
+  DeprecatedUser:
+    # FLAGGED: nothing references it.
+    type: object
