@@ -3,8 +3,9 @@
 IntelliJ-family plugin. Reliable go-to-definition (Ctrl+Click / Ctrl+B)
 for `$ref` values in OpenAPI/Swagger specs written in JSON or YAML,
 resolved entirely against local files, a warning on any `$ref` that
-doesn't actually resolve, and detection of reusable components that
-nothing in the project references.
+doesn't actually resolve, detection of reusable components that
+nothing in the project references, and `example`/`default` values
+checked against their schema.
 
 **100% Paid, no free tier.** Unlike every other plugin in this catalog,
 this one has no permanently-free base -- every feature requires a
@@ -95,6 +96,46 @@ automatic removal, since deleting a component a consumer elsewhere
 still needs isn't reversible. Settings -> Editor -> Inspections ->
 OpenAPI Companion turns it off or changes its severity.
 
+### Example and default values checked against their schema
+
+An inline `example` or `default` that contradicts the schema it
+illustrates gets a warning, pointing at the exact offending value:
+
+- a schema's own `example`/`default` at any depth (and, in OAS 3.1, its
+  `examples` array);
+- a parameter's or header's `example`/`examples`;
+- a JSON media type's `example`/`examples` (request and response bodies);
+- Swagger 2.0 parameter/header `default`s and JSON response `examples`.
+
+Checked: `type` (OAS 3.1 type arrays such as `[string, "null"]`, OAS 3.0
+`nullable`, Swagger 2.0 `x-nullable`), `enum`, `const` (OAS 3.1),
+`required`, `properties`, `items`, `minimum`/`maximum` (both the boolean
+and the numeric `exclusiveMinimum`/`exclusiveMaximum`),
+`minLength`/`maxLength`. `$ref`s are followed through local files in
+either format, so a YAML spec whose schema lives in a JSON file is checked
+too. Same kind of check as Spectral's `oas3-valid-schema-example` /
+`oas3-valid-media-example` and Redocly's `no-invalid-schema-examples` /
+`no-invalid-media-type-examples`, with no CLI and no account.
+
+It's fail-closed: anything it can't decide for certain is skipped, never
+reported. Deliberately skipped:
+
+- schemas using `allOf`, `oneOf`, `anyOf`, `not` or `if`/`then`/`else`,
+  and `$ref`s that don't resolve to a local file (remote refs are never
+  fetched);
+- unquoted YAML values that YAML 1.1 and YAML 1.2 parsers read
+  differently -- `2024-01-01` (a timestamp in 1.1), `yes` (a boolean in
+  1.1), `010` (octal in 1.1), `12:30` -- since different tools in the same
+  pipeline would disagree on their type;
+- a missing required property that is `readOnly` or `writeOnly`, which an
+  example can legitimately leave out depending on its direction;
+- non-JSON media types (an XML or plain-text example is a string by
+  design), `externalValue`, and a top-level `example: null`;
+- Swagger 2.0 `x-example`, a vendor extension some tools read as raw
+  field text.
+
+`pattern` and `format` aren't checked yet.
+
 ## v1 scope cuts (documented, not silent)
 
 - Cross-format resolution (a JSON file's `$ref` pointing into a YAML
@@ -107,10 +148,9 @@ OpenAPI Companion turns it off or changes its severity.
   `#/definitions/...` used inside an OpenAPI 3.x document, or vice
   versa) gets a specific explanation instead of a generic "cannot
   resolve" — most real spec migrations leave a few of these behind.
-- No full JSON Schema instance validation (checking `example`/`default`
-  values against their declared `type`, including OAS 3.1's type-union
-  array syntax) -- a meaningfully larger scope than reference
-  resolution, deliberately not attempted in v1.
+- Not a full JSON Schema validator: `example`/`default` values are checked
+  against the keywords listed above (OAS 3.1 type unions included), and
+  anything else is skipped rather than guessed.
 
 ## Support
 
