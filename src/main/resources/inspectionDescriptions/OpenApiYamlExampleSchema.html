@@ -8,7 +8,10 @@ match the schema it belongs to: a schema's own <code>example</code>/<code>defaul
 and Redocly's <code>no-invalid-schema-examples</code> / <code>no-invalid-media-type-examples</code>, with no CLI or
 account required. Checked: <code>type</code> (including OAS 3.1 type arrays with <code>"null"</code> and OAS 3.0
 <code>nullable</code>), <code>enum</code>, <code>const</code>, <code>required</code>, <code>properties</code>,
-<code>items</code>, <code>minimum</code>/<code>maximum</code>, <code>minLength</code>/<code>maxLength</code>, through
+<code>items</code>, <code>minimum</code>/<code>maximum</code>, <code>minLength</code>/<code>maxLength</code>, the unambiguous <code>format</code>s
+(<code>date-time</code>, <code>date</code>, <code>time</code>, <code>email</code>, <code>uuid</code>, <code>uri</code>, <code>ipv4</code>,
+<code>ipv6</code>, <code>hostname</code>, <code>byte</code>, <code>int32</code>, <code>int64</code>), and in OpenAPI 3.2 documents an Example
+Object's <code>dataValue</code> and the schemas of <code>components.mediaTypes</code> and <code>itemSchema</code>, through
 local <code>$ref</code>s in either format.</p>
 <p>Deliberately never reported, rather than guessed:</p>
 <ul>

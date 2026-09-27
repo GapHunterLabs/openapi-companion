@@ -34,6 +34,57 @@ class ExampleSiteFinderTest {
         )
     }
 
+    private fun labels(spec: Map<String, Any?>) = ExampleSiteFinder.find(node(spec), SpecVersion.OPENAPI_3).map { it.label }
+
+    private fun oas32Spec(version: String) = mapOf(
+        "openapi" to version,
+        "paths" to mapOf(
+            "/p" to mapOf(
+                "query" to mapOf(
+                    "responses" to mapOf(
+                        "200" to mapOf(
+                            "content" to mapOf(
+                                "application/json" to mapOf(
+                                    "schema" to mapOf("type" to "integer"),
+                                    "examples" to mapOf("a" to mapOf("dataValue" to 1, "serializedValue" to "1", "value" to 2)),
+                                    "itemSchema" to mapOf("type" to "string", "default" to "x"),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                "additionalOperations" to mapOf(
+                    "LINK" to mapOf(
+                        "responses" to mapOf("200" to mapOf("content" to mapOf("application/json" to mapOf("schema" to mapOf("type" to "integer"), "example" to 7)))),
+                    ),
+                ),
+            ),
+        ),
+        "components" to mapOf(
+            "mediaTypes" to mapOf(
+                "M" to mapOf(
+                    "schema" to mapOf("type" to "integer", "example" to 1),
+                    "itemSchema" to mapOf("type" to "integer", "default" to 2),
+                    "example" to "not walked",
+                ),
+            ),
+        ),
+    )
+
+    @Test
+    fun oas32AddsDataValueItemSchemaQueryAdditionalOperationsAndMediaTypes() {
+        assertEquals(
+            listOf("default", "examples.a.value", "examples.a.dataValue", "example", "example", "default"),
+            labels(oas32Spec("3.2.0")),
+        )
+    }
+
+    @Test
+    fun theSameDocumentDeclaredAs31OnlyGetsWhatThat31Has() {
+        // No dataValue, itemSchema, query, additionalOperations or components.mediaTypes before OAS 3.2.
+        assertEquals(emptyList<String>(), labels(oas32Spec("3.1.0")).filter { it != "examples.a.value" })
+    }
+
     @Test
     fun aPropertyNamedExampleOrDefaultIsNotAnExample() {
         val spec = mapOf(

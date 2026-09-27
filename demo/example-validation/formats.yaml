@@ -1,0 +1,67 @@
+openapi: 3.0.3
+info:
+  title: Format validation demo
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    OrderId:
+      type: string
+      format: uuid
+      # FLAGGED
+      example: order-123
+    OrderIdOk:
+      type: string
+      format: uuid
+      # SILENT
+      example: 123e4567-e89b-12d3-a456-426614174000
+    Placed:
+      type: string
+      format: date-time
+      # FLAGGED: RFC 3339 needs an offset
+      example: '2024-05-17T09:30:00'
+    PlacedOk:
+      type: string
+      format: date-time
+      # SILENT
+      example: '2024-05-17T09:30:00Z'
+    Day:
+      type: string
+      format: date
+      # FLAGGED: not a real calendar date
+      example: '2024-02-30'
+    Contact:
+      type: string
+      format: email
+      # FLAGGED
+      example: not-an-email
+    Homepage:
+      type: string
+      format: uri
+      # FLAGGED: a relative reference is not a URI
+      example: /docs
+    Address:
+      type: string
+      format: ipv4
+      # FLAGGED
+      example: '192.168.1.256'
+    Address6:
+      type: string
+      format: ipv6
+      # SILENT
+      example: '2001:db8::8a2e:370:7334'
+    Big:
+      type: integer
+      format: int32
+      # FLAGGED
+      example: 3000000000
+    BigOk:
+      type: integer
+      format: int64
+      # SILENT
+      example: 3000000000
+    CustomFormat:
+      type: string
+      format: order-reference
+      # SILENT: an unknown format is never guessed
+      example: anything goes

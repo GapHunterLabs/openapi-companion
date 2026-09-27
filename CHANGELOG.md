@@ -4,6 +4,31 @@
 
 ## [Unreleased]
 
+## [2026.4.0]
+
+### Added
+
+- **OpenAPI 3.2 support in the example check.** OAS 3.2.0 (September 2025) is
+  not yet understood by the IDE's own OpenAPI support, so a 3.2 document now
+  gets its new places checked: an Example Object's `dataValue` is validated
+  like `value` (`serializedValue` is wire text and is never checked), the
+  schemas of `components.mediaTypes` and of a media type's `itemSchema` are
+  walked, and so are operations under the new `query` method and under
+  `additionalOperations`. An unreferenced `components.mediaTypes` entry is
+  reported by the unused-component check like any other component. Only a
+  document that declares `openapi: 3.2.x` or later gets these.
+- **`format` is now checked in `example` and `default` values**, for the
+  formats whose validity is unambiguous: `date-time` (RFC 3339, with an
+  offset), `date`, `time`, `email`, `uuid`, `uri` (needs a scheme), `ipv4`,
+  `ipv6`, `hostname`, `byte` (base64), and the `int32`/`int64` ranges. A format
+  outside that list (custom, `binary`, `password`, `float`, `double`,
+  `uri-reference`, ...) is never reported. `pattern` is still not checked.
+
+### Fixed
+
+- Review/star CTA now links to this plugin's own Marketplace
+  reviews page instead of the vendor's generic plugin list.
+
 ## [2026.3.1]
 
 ### Added
@@ -136,7 +161,8 @@
 - No full JSON Schema instance validation (OAS 3.1 type unions
   included) -- a meaningfully larger scope than reference resolution.
 
-[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.3.1...HEAD
+[Unreleased]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.4.0...HEAD
+[2026.4.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.3.1...2026.4.0
 [2026.3.1]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.3.0...2026.3.1
 [2026.3.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.2.0...2026.3.0
 [2026.2.0]: https://github.com/GapHunterLabs/openapi-companion/compare/2026.1.3...2026.2.0

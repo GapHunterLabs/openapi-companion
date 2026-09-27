@@ -36,6 +36,14 @@ class ComponentCollectorTest : BasePlatformTestCase() {
         )
     }
 
+    fun testCollectsOas32MediaTypes() {
+        val declarations = collect("openapi.yaml", "openapi: 3.2.0\ncomponents:\n  mediaTypes: {PetStream: {}}\n  schemas: {S: {}}\n")
+        assertEquals(
+            listOf("components/schemas" to "S", "components/mediaTypes" to "PetStream").sortedBy { it.first },
+            declarations.map { it.section to it.name }.sortedBy { it.first },
+        )
+    }
+
     fun testCollectsTheSameSectionsInJson() {
         val declarations = collect(
             "openapi.json",

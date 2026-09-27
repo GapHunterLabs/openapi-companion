@@ -30,6 +30,7 @@ private const val REF_KEYWORD = "\$ref"
 object ComponentCollector {
     private val OAS3_SECTIONS = listOf(
         "schemas", "responses", "parameters", "examples", "requestBodies", "headers", "links", "callbacks",
+        "mediaTypes", // OAS 3.2; Spectral's rule predates it, but it is referenced through the same `$ref`
     ).map { listOf("components", it) }
     private val SWAGGER2_SECTIONS = listOf(listOf("definitions"))
     private val SCHEMA_SECTION_KEYS = setOf("schemas", "definitions")

@@ -9,7 +9,7 @@
         $ref that doesn't resolve, detection of reusable components that
         nothing in the project references, validation of example and
         default values against their schema (OAS 3.1 type unions
-        included) -- no Spectral CLI or account needed -- and
+        included, OpenAPI 3.2 documents, and the common formats such as date-time, uuid and email) -- no Spectral CLI or account needed -- and
         always-current compatibility with new JetBrains IDE
         releases.</p>
         <p>Built from real, current evidence across four independent
@@ -41,7 +41,7 @@
          plugin's own version, which is why this build moved from 0.1.0 to
          the AAAA.N.N scheme (same forcing function already hit once with
          ansible-companion's Freemium enrollment). -->
-    <product-descriptor code="POPENAPICOMPANI" release-date="20260921" release-version="20263"/>
+    <product-descriptor code="POPENAPICOMPANI" release-date="20260926" release-version="20264"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="OpenAPI Companion" displayType="BALLOON"/>

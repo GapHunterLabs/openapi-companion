@@ -15,15 +15,17 @@ class Violation<out A>(val at: SpecNode<A>, val path: String, val detail: String
  * `nullable` and Swagger 2.0 `x-nullable`), `enum`, `const` (OAS 3.1+),
  * `required`, `properties`, `items`, `minimum`/`maximum` (with both the
  * boolean and the numeric form of `exclusiveMinimum`/`exclusiveMaximum`),
- * `minLength`/`maxLength`.
+ * `minLength`/`maxLength`, and `format` for the unambiguous ones
+ * ([FormatChecker]: date-time, date, time, email, uuid, uri, ipv4, ipv6,
+ * hostname, byte, int32, int64).
  *
  * Skipped, never reported: a schema using `allOf`/`oneOf`/`anyOf`/`not`/
  * `if`-`then`-`else`, dynamic/recursive refs or `$id`/`$anchor`; a `$ref`
  * that doesn't resolve locally; an unknown `type`; an [SpecNode.Unknown]
  * value; a required property that is `readOnly`/`writeOnly` (an example
- * can legitimately leave it out, depending on its direction). `pattern`,
- * `format` and the other keywords aren't checked -- an unchecked keyword can
- * only hide a problem, never invent one.
+ * can legitimately leave it out, depending on its direction). `pattern`, an
+ * unknown `format` and the other keywords aren't checked -- an unchecked
+ * keyword can only hide a problem, never invent one.
  */
 class SchemaValidator<A>(
     private val jsonSchemaSemantics: Boolean,
@@ -34,6 +36,7 @@ class SchemaValidator<A>(
         private const val REF = "\$ref"
         private const val MAX_REF_HOPS = 32
         private const val MAX_ENUM_VALUES_SHOWN = 5
+        private const val MAX_VALUE_SHOWN = 40
         private val KNOWN_TYPES = setOf("string", "number", "integer", "boolean", "object", "array", "null")
         private val FAIL_CLOSED_KEYWORDS = setOf(
             "allOf", "oneOf", "anyOf", "not", "if", "then", "else",
@@ -207,6 +210,11 @@ class SchemaValidator<A>(
         schema.num("exclusiveMaximum")?.let { bound ->
             if (number >= bound) out += Violation(value, path, "must be less than ${format(bound)}")
         }
+        if (value.isIntegral) {
+            schema.str("format")?.let { formatName ->
+                FormatChecker.integerProblem(formatName, number)?.let { problem -> out += Violation(value, path, "${format(number)} is $problem") }
+            }
+        }
     }
 
     private fun checkString(value: SpecNode.Str<A>, schema: SpecNode.Obj<A>, path: String, out: MutableList<Violation<A>>) {
@@ -217,6 +225,12 @@ class SchemaValidator<A>(
         }
         schema.num("maxLength")?.let { maxLength ->
             if (length > maxLength) out += Violation(value, path, "longer than maxLength ${format(maxLength)} (length ${format(length)})")
+        }
+        schema.str("format")?.let { formatName ->
+            FormatChecker.stringProblem(formatName, value.value)?.let { problem ->
+                val shown = if (value.value.length > MAX_VALUE_SHOWN) value.value.take(MAX_VALUE_SHOWN) + "..." else value.value
+                out += Violation(value, path, "'$shown' is $problem")
+            }
         }
     }
 

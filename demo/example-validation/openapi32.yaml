@@ -1,0 +1,62 @@
+openapi: 3.2.0
+info:
+  title: OAS 3.2 example validation demo
+  version: 1.0.0
+paths:
+  /pets:
+    # OAS 3.2: the QUERY method (a safe request with a body)
+    query:
+      operationId: searchPets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+            examples:
+              # FLAGGED: dataValue is validated like value ('age' must be an integer)
+              bad:
+                dataValue:
+                  name: Rex
+                  age: old
+              # SILENT: a valid dataValue
+              good:
+                dataValue:
+                  name: Rex
+                  age: 3
+              # SILENT: serializedValue is wire text, never checked against the schema
+              wire:
+                serializedValue: '{"name": "Rex", "age": "old"}'
+      responses:
+        '200':
+          description: ok
+    # OAS 3.2: non-standard HTTP methods
+    additionalOperations:
+      LINK:
+        responses:
+          '200':
+            description: ok
+            content:
+              application/json:
+                schema:
+                  type: integer
+                # FLAGGED: operations under additionalOperations are walked
+                example: not-a-number
+components:
+  mediaTypes:
+    PetStream:
+      # OAS 3.2: itemSchema describes each item of a sequential media type
+      itemSchema:
+        type: object
+        properties:
+          name:
+            type: string
+            # FLAGGED: a schema inside components.mediaTypes is walked
+            default: 42
+  schemas:
+    Pet:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer

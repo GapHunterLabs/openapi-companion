@@ -71,6 +71,32 @@ class OpenApiExampleSchemaInspectionTest : BasePlatformTestCase() {
         )
     }
 
+    fun testOas32YamlSpec() {
+        assertEquals(
+            setOf(
+                "'examples.bad.dataValue' doesn't match its schema at 'age': expected integer, found string",
+                "'example' doesn't match its schema: expected integer, found string",
+                "'default' doesn't match its schema: expected string, found integer",
+            ),
+            findingsIn("openapi32.yaml"),
+        )
+    }
+
+    fun testFormatsAreCheckedForTheUnambiguousOnes() {
+        assertEquals(
+            setOf(
+                "'example' doesn't match its schema: 'order-123' is not a valid UUID (8-4-4-4-12 hexadecimal digits)",
+                "'example' doesn't match its schema: '2024-05-17T09:30:00' is not a valid date-time (RFC 3339, e.g. 2024-05-17T09:30:00Z)",
+                "'example' doesn't match its schema: '2024-02-30' is not a valid date (YYYY-MM-DD)",
+                "'example' doesn't match its schema: 'not-an-email' is not a valid email address",
+                "'example' doesn't match its schema: '/docs' is not a valid URI (needs a scheme such as https:, and no spaces)",
+                "'example' doesn't match its schema: '192.168.1.256' is not a valid IPv4 address",
+                "'example' doesn't match its schema: 3000000000 is outside the range of int32 (-2147483648 to 2147483647)",
+            ),
+            findingsIn("formats.yaml"),
+        )
+    }
+
     fun testSwagger2Spec() {
         assertEquals(
             setOf(
