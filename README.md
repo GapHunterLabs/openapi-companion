@@ -105,13 +105,24 @@ illustrates gets a warning, pointing at the exact offending value:
   `examples` array);
 - a parameter's or header's `example`/`examples`;
 - a JSON media type's `example`/`examples` (request and response bodies);
-- Swagger 2.0 parameter/header `default`s and JSON response `examples`.
+- Swagger 2.0 parameter/header `default`s and JSON response `examples`;
+- **OpenAPI 3.2** documents also get their new places checked: an Example
+  Object's `dataValue` (validated like `value`; `serializedValue` is wire
+  text and never checked), the schemas of `components.mediaTypes` and of a
+  media type's `itemSchema`, operations under the `query` method and under
+  `additionalOperations`. A `components.mediaTypes` entry that nothing
+  references is reported by the unused-component check like any other
+  component. Only a document that declares `openapi: 3.2.x` (or later) gets
+  these.
 
 Checked: `type` (OAS 3.1 type arrays such as `[string, "null"]`, OAS 3.0
 `nullable`, Swagger 2.0 `x-nullable`), `enum`, `const` (OAS 3.1),
 `required`, `properties`, `items`, `minimum`/`maximum` (both the boolean
 and the numeric `exclusiveMinimum`/`exclusiveMaximum`),
-`minLength`/`maxLength`. `$ref`s are followed through local files in
+`minLength`/`maxLength`, and `format` for the formats whose validity is
+unambiguous: `date-time` (RFC 3339, offset required), `date`, `time`,
+`email`, `uuid`, `uri` (needs a scheme), `ipv4`, `ipv6`, `hostname`, `byte`
+(base64), and the `int32`/`int64` ranges. `$ref`s are followed through local files in
 either format, so a YAML spec whose schema lives in a JSON file is checked
 too. Same kind of check as Spectral's `oas3-valid-schema-example` /
 `oas3-valid-media-example` and Redocly's `no-invalid-schema-examples` /
@@ -134,7 +145,9 @@ reported. Deliberately skipped:
 - Swagger 2.0 `x-example`, a vendor extension some tools read as raw
   field text.
 
-`pattern` and `format` aren't checked yet.
+`pattern` isn't checked yet, and a `format` outside the list above
+(custom formats, `binary`, `password`, `float`, `double`, `uri-reference`,
+...) is never reported.
 
 ## v1 scope cuts (documented, not silent)
 

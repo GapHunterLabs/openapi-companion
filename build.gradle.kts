@@ -25,6 +25,13 @@ dependencies {
     }
 }
 
+// Precision run on a real corpus (see OpenApiCorpusPrecisionTest): only when -Popenapi.corpus=<dir> is given.
+tasks.withType<Test>().configureEach {
+    listOf("openapi.corpus", "openapi.corpus.report").forEach { key ->
+        providers.gradleProperty(key).orNull?.let { systemProperty(key, it) }
+    }
+}
+
 intellijPlatform {
     pluginConfiguration {
         ideaVersion {
