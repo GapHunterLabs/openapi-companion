@@ -7,6 +7,13 @@ doesn't actually resolve, detection of reusable components that
 nothing in the project references, and `example`/`default` values
 checked against their schema.
 
+![OpenAPI Companion: catch what's wrong in an OpenAPI spec before your API consumers do](docs/media/hero.gif)
+
+Each feature on its own:
+[Example validation](docs/media/01-example-validation.gif) ·
+[Unused components](docs/media/02-unused-components.gif) ·
+[$ref navigation and broken $refs](docs/media/03-refs.gif)
+
 **100% Paid, no free tier.** Unlike every other plugin in this catalog,
 this one has no permanently-free base -- every feature requires a
 license after the standard JetBrains 30-day trial.
