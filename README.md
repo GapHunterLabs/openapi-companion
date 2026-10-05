@@ -172,10 +172,18 @@ reported. Deliberately skipped:
   against the keywords listed above (OAS 3.1 type unions included), and
   anything else is skipped rather than guessed.
 
+## Buying for a team
+
+Pro licenses, for one developer or a whole team, are sold only through
+JetBrains Marketplace: open the [Pricing tab](https://plugins.jetbrains.com/plugin/33349-openapi-companion/pricing) on the plugin's
+page. JetBrains Marketplace handles checkout and license management.
+
 ## Support
 
-Questions, bug reports, or team/volume licensing: contact us at
-**gaphunterlabs@gmail.com**.
+- **Bugs and feature requests:** [GitHub Issues](https://github.com/GapHunterLabs/openapi-companion/issues)
+- **Questions, or custom rules for a team's codebase:** **gaphunterlabs@gmail.com**
+- **Security vulnerabilities:** report privately as described in [SECURITY.md](SECURITY.md), not in a public issue.
+- **Privacy and network behavior:** [PRIVACY.md](PRIVACY.md)
 
 ## Development
 
