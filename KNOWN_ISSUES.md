@@ -98,11 +98,9 @@ external launcher process to relaunch it, unlike a real installed IDE)
 7`). Relaunching hits the exact same two dialogs again, in a loop with
 no way to dismiss them and just use the IDE normally.
 
-**Root cause (inferred, not deeply investigated further --
-CLAUDE.md's anti-loop rule applies to this too):** this is new
+**Root cause (inferred, not investigated further):** this is new
 behavior that only appeared after adding a *real*, non-`optional`
-`<product-descriptor>` for the Paid pricing model enrollment (see
-[[openapi_companion_v010]]). `ansible-companion`/`api-security-companion`
+`<product-descriptor>` for the Paid pricing model enrollment. `ansible-companion`/`api-security-companion`
 never show this, because their descriptors both have
 `optional="true"` (Freemium -- the platform doesn't gate a Freemium
 plugin's own launch on licensing status). For a 100%-Paid descriptor,
@@ -124,8 +122,7 @@ local testing/demo work on this plugin, not just this one check.
 **"Start trial" tried, 2026-08-05 (same session, after re-launching
 clean, no code bypass): also blocked, but for a clear, external
 reason.** Clicking "Start Trial" returns "Trial license is not
-supported for your product version" -- makes sense once connected to
-[[api_security_companion_pro_v020]]'s own note: the **Trial Period**
+supported for your product version" -- which matches how Marketplace works: the **Trial Period**
 field on a plugin's Marketplace Sales page only becomes settable once
 that plugin clears moderation and reaches "In stock" status.
 `openapi-companion`'s `2026.1.0` build is still "Submitted", not yet
