@@ -332,8 +332,7 @@ class YamlOpenApiRefReferenceTest : BasePlatformTestCase() {
     /**
      * Direct unit test of [OpenApiGotoDeclarationHandler] -- ported from
      * the identical fix confirmed working live in asyncapi-companion
-     * (2026-08-13, see `openapi_companion_ctrlclick_broken_with_trial`
-     * memory entry): a real `GotoDeclarationHandler` sidesteps the
+     * (2026-08-13): a real `GotoDeclarationHandler` sidesteps the
      * broken suppressor-then-fallback hand-off that made Ctrl+B show
      * "No usages found" despite the suppressor and the PsiReference both
      * working correctly in isolation.

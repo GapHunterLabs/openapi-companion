@@ -13,10 +13,9 @@ import org.jetbrains.yaml.psi.YAMLScalar
 /**
  * Registered `GotoDeclarationHandler` for `$ref` values in OpenAPI/
  * Swagger documents (JSON and YAML) -- the direct fix for a real,
- * confirmed platform bug (2026-08-13, see the
- * `openapi_companion_ctrlclick_broken_with_trial` memory entry for the
- * full logged investigation, done against asyncapi-companion first and
- * confirmed fixed there before porting here): [OpenApiJsonSchemaGtdSuppressor]
+ * confirmed platform bug (2026-08-13; investigated with logging in
+ * asyncapi-companion first and confirmed fixed there before porting
+ * here): [OpenApiJsonSchemaGtdSuppressor]
  * correctly suppresses the bundled `JsonSchemaGotoDeclarationHandler`
  * on every real Ctrl+B attempt, and [YamlOpenApiRefReference]/
  * [JsonOpenApiRefReference] correctly resolve `$ref` values -- but in a
