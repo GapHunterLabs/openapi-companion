@@ -4,29 +4,16 @@
     <name>OpenAPI Companion</name>
     <vendor>Gap Hunter Labs</vendor>
     <description><![CDATA[
-        <p>Reliable go-to-definition for $ref in OpenAPI/Swagger specs
-        (JSON and YAML, same-file and external-file), a warning on any
-        $ref that doesn't resolve, detection of reusable components that
-        nothing in the project references, validation of example and
-        default values against their schema (OAS 3.1 type unions
-        included, OpenAPI 3.2 documents, and the common formats such as date-time, uuid and email) -- no Spectral CLI or account needed -- and
-        always-current compatibility with new JetBrains IDE
-        releases.</p>
-        <p>Built from real, current evidence across four independent
-        sources in this exact space: a paid competitor with a
-        multi-year recurring pattern of falling 2+ releases behind
-        every new JetBrains IDE version (weeks without a working
-        plugin each time) and no external $ref support at all
-        ("not usable"); a freemium competitor with a memory leak that
-        crashes the IDE on large specs and incomplete OAS 3.1 support
-        despite advertising it; a free competitor, abandoned since
-        2023, that makes the IDE unusable on large files (10+ second
-        lags); and JetBrains's own bundled OpenAPI plugin, independently
-        documented elsewhere in this catalog as "catastrophically
-        slow... turned into torture" even on small 10-15-endpoint
-        files.</p>
-        <p>100% Paid, no free tier -- every feature above requires a
-        license after the standard JetBrains 30-day trial.</p>
+        <p>$ref navigation and spec checks for OpenAPI and Swagger files in JSON and YAML: go to definition across files, broken references, unused components, and examples that don't match their schema. Resolved against local files only: no Spectral CLI, no account, no network calls.</p>
+        <ul>
+          <li><b>Go to definition</b> (Ctrl+Click or Ctrl+B) on any <code>$ref</code>, in the same file or in another file of the same format.</li>
+          <li><b>Broken references:</b> every <code>$ref</code> that doesn't resolve is flagged, with a specific explanation when it uses the other version's convention (<code>#/definitions/</code> in OpenAPI 3.x, or <code>#/components/</code> in Swagger 2.0).</li>
+          <li><b>Unused components:</b> schemas, responses, parameters, examples, request bodies, headers, links and callbacks that nothing references are grayed out, like unused code.</li>
+          <li><b>Examples checked against their schema:</b> <code>example</code> and <code>default</code> values are validated, including OpenAPI 3.1 type unions, OpenAPI 3.2 documents and formats such as <code>date-time</code>, <code>uuid</code> and <code>email</code>.</li>
+        </ul>
+        <p>Not supported yet: a <code>$ref</code> from a JSON file into a YAML file, or the other way around.</p>
+        <p>Paid plugin with a free trial. Licenses for one developer or a whole team are on the Pricing tab.</p>
+        <p><a href="https://github.com/GapHunterLabs/openapi-companion">Documentation</a> · <a href="https://github.com/GapHunterLabs/openapi-companion/issues">Report an issue</a></p>
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>

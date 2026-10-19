@@ -4,8 +4,13 @@
 
 ## [Unreleased]
 
+## [2026.4.1]
+
 ### Changed
 
+- New plugin description: a short list of what the plugin does and its
+  current limits. The description and the README no longer state a trial
+  length; the plugin's Marketplace page shows the current one.
 - The rating prompt's local counter keeps one-way fingerprints of findings
   instead of their file paths, and deletes the list that earlier versions
   kept.

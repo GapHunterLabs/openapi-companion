@@ -1,6 +1,6 @@
 # Privacy Policy — OpenAPI Companion
 
-**Effective date:** 2026-10-06
+**Effective date:** 2026-10-19
 
 OpenAPI Companion is a Gap Hunter Labs plugin for IntelliJ Platform IDEs.
 This policy is short because the plugin's design makes it short: there
@@ -16,11 +16,11 @@ telemetry, no crash reports, no personally identifiable information.
 
 To decide when to show its one-time rating prompt, the plugin keeps two values
 in the IDE's own settings on your computer: whether you have answered the
-prompt, and a list of up to 500 findings it has already counted. Until the
-next release, each entry in that list is the file path and line of a finding,
-sometimes with its message. From the next release on, each entry is a one-way
-fingerprint that cannot be turned back into a path, and the old list is
-deleted. None of this is ever sent anywhere.
+prompt, and a list of up to 500 findings it has already counted. Each entry
+in that list is a one-way fingerprint that cannot be turned back into a file
+path. Versions before 2026.4.1 kept the file path and line of each finding
+instead; 2026.4.1 deletes that older list the first time it counts a finding.
+None of this is ever sent anywhere.
 
 ## Network access
 

@@ -16,7 +16,7 @@ Each feature on its own:
 
 **100% Paid, no free tier.** Unlike every other plugin in this catalog,
 this one has no permanently-free base -- every feature requires a
-license after the standard JetBrains 30-day trial.
+license once the free trial ends.
 
 ## Why it exists
 
