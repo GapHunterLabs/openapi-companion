@@ -1,6 +1,6 @@
 # Privacy Policy — OpenAPI Companion
 
-**Effective date:** 2026-10-19
+**Effective date:** 2026-11-01
 
 OpenAPI Companion is a Gap Hunter Labs plugin for IntelliJ Platform IDEs.
 This policy is short because the plugin's design makes it short: there
@@ -10,7 +10,9 @@ is nothing to disclose beyond what's below.
 
 **Nothing.** OpenAPI Companion does not collect, transmit, or sell
 any data — no source code, no file contents, no usage analytics, no
-telemetry, no crash reports, no personally identifiable information.
+telemetry, no personally identifiable information. The one way data about
+this plugin can leave your machine is an error report about the plugin itself
+that you send through the IDE: see **Error reports** below.
 
 ## What it keeps on your machine
 
@@ -22,9 +24,26 @@ path. Versions before 2026.4.1 kept the file path and line of each finding
 instead; 2026.4.1 deletes that older list the first time it counts a finding.
 None of this is ever sent anywhere.
 
+## Error reports (only if you send them)
+
+OpenAPI Companion registers the IDE's standard JetBrains Marketplace error
+reporter. When the IDE attributes an exception or a UI freeze to this plugin,
+it can send a report to JetBrains Marketplace, where the plugin's author can
+read it:
+
+- Only when you send it from the IDE's error dialog, or when you have turned on
+  automatic error reporting in the IDE settings.
+- The IDE builds and sends the report, not this plugin. For an exception it
+  carries the stack trace and the IDE and plugin versions; for a freeze, thread
+  dumps and, when the IDE adds them, a performance snapshot and metrics; plus
+  anything you write in the dialog.
+- It is handled under JetBrains' privacy policy and the JetBrains Marketplace
+  terms. Gap Hunter Labs uses these reports only to fix the plugin.
+
 ## Network access
 
-**None.** OpenAPI Companion makes zero network calls during normal
+**None from the plugin.** Error reports, when you send them, are sent by the IDE
+(see above). OpenAPI Companion makes zero network calls during normal
 operation. Every `$ref` resolution it performs runs entirely in-process,
 inside your IDE, against local files already on disk. Nothing you write,
 open, or edit is ever sent anywhere — an `http(s)://` `$ref` is shown as

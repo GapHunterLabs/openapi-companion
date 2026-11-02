@@ -32,6 +32,9 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="OpenAPI Companion" displayType="BALLOON"/>
+        <!-- The IDE's standard reporter: errors and freezes attributed to this plugin reach its Marketplace page,
+             only when the user sends them. -->
+        <errorHandler implementation="com.intellij.diagnostic.JetBrainsMarketplaceErrorReportSubmitter"/>
         <psi.referenceContributor language="JSON"
                                    implementation="dev.gaphunter.openapicompanion.reference.JsonOpenApiRefReferenceContributor"/>
         <psi.referenceContributor language="yaml"

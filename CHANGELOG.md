@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+## [2026.4.2]
+
+### Added
+
+- Errors in this plugin can reach its author through the IDE's standard error
+  reporter for JetBrains Marketplace, only when you send them. `PRIVACY.md`
+  describes what such a report carries; the plugin itself still sends nothing.
+
 ## [2026.4.1]
 
 ### Changed
